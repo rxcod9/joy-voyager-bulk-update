@@ -47,4 +47,29 @@ return [
     'controllers' => [
         'namespace' => 'Joy\\VoyagerBulkUpdate\\Http\\Controllers',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | DataRows config
+    |--------------------------------------------------------------------------
+    |
+    | Here you can specify which data rows you want to bulk update
+    |
+    */
+
+    'data_rows' => [
+        'default' => [
+            'assigned_to_id',
+            'parent_id',
+            'status',
+        ],
+        'users' => [
+            'role_id'
+        ],
+        'posts' => [
+            'status',
+            'category_id',
+            'featured',
+        ],
+    ],
 ];

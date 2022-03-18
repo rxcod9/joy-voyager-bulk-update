@@ -10,18 +10,13 @@ use TCG\Voyager\Facades\Voyager;
 class BulkUpdateAction extends AbstractAction
 {
     /**
-     * Optional File Name
+     * Optional rows
      */
-    protected $fileName;
-
-    /**
-     * Optional Writer Type
-     */
-    protected $writerType;
+    protected $rows;
 
     public function getTitle()
     {
-        return __('joy-voyager-bulk-update::generic.bulk_bulk_update');
+        return __('joy-voyager-bulk-update::generic.bulk_update');
     }
 
     public function getIcon()
@@ -37,7 +32,7 @@ class BulkUpdateAction extends AbstractAction
     public function getAttributes()
     {
         return [
-            'id'     => 'bulk_bulk_update_btn',
+            'id'     => 'bulk_update_btn',
             'class'  => 'btn btn-info',
             'target' => '_blank',
         ];
@@ -50,15 +45,33 @@ class BulkUpdateAction extends AbstractAction
 
     public function shouldActionDisplayOnDataType()
     {
-        return config('joy-voyager-bulk-update.enabled', true) !== false
-            && isInPatterns(
-                $this->dataType->slug,
-                config('joy-voyager-bulk-update.allowed_slugs', ['*'])
-            )
-            && !isInPatterns(
-                $this->dataType->slug,
-                config('joy-voyager-bulk-update.not_allowed_slugs', [])
+        if (config('joy-voyager-bulk-update.enabled', true) !== true) {
+            return false;
+        }
+        if (!isInPatterns(
+            $this->dataType->slug,
+            config('joy-voyager-bulk-update.allowed_slugs', ['*'])
+        )) {
+            return false;
+        }
+        if (isInPatterns(
+            $this->dataType->slug,
+            config('joy-voyager-bulk-update.not_allowed_slugs', [])
+        )) {
+            return false;
+        }
+
+        $defaultDataRows  = config('joy-voyager-bulk-update.data_rows.default');
+        $dataTypeDataRows = config('joy-voyager-bulk-update.data_rows.' . $this->dataType->slug, $defaultDataRows);
+        $dataTypeDataRows = $this->rows ?? $dataTypeDataRows;
+
+        $dataTypeRows = $this->dataType->editRows->filter(function ($row) use ($dataTypeDataRows) {
+            return in_array($row->field, $dataTypeDataRows) || (
+                $row->type === 'relationship' && in_array($row->details->column, $dataTypeDataRows)
             );
+        });
+
+        return $dataTypeRows->count() > 0;
     }
 
     public function massAction($ids, $comingFrom)
@@ -72,7 +85,10 @@ class BulkUpdateAction extends AbstractAction
         // Check permission
         Gate::authorize('edit', app($dataType->model_name));
 
-        //
+        return redirect()->back()->with([
+            'message'    => __('voyager::generic.successfully_updated') . " {$dataType->getTranslatedAttribute('display_name_singular')}",
+            'alert-type' => 'success',
+        ]);
     }
 
     public function view()
@@ -83,6 +99,24 @@ class BulkUpdateAction extends AbstractAction
             $view = 'joy-voyager-bulk-update::' . $this->dataType->slug . '.bulk-update';
         }
         return $view;
+    }
+
+    public function rows()
+    {
+        if($this->rows) {
+            return $this->rows;
+        }
+
+        $defaultDataRows  = config('joy-voyager-bulk-update.data_rows.default');
+        $dataTypeDataRows = config('joy-voyager-bulk-update.data_rows.' . $this->dataType->slug, $defaultDataRows);
+
+        $dataTypeRows = $this->dataType->editRows->filter(function ($row) use ($dataTypeDataRows) {
+            return in_array($row->field, $dataTypeDataRows) || (
+                $row->type === 'relationship' && in_array($row->details->column, $dataTypeDataRows)
+            );
+        });
+
+        return $dataTypeRows->pluck('field')->toArray();
     }
 
     protected function getSlug(Request $request)
