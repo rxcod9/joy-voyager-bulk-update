@@ -6,8 +6,6 @@ namespace Joy\VoyagerBulkUpdate;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
-use Joy\VoyagerBulkUpdate\BulkUpdates\AllDataTypesBulkUpdate;
-use Joy\VoyagerBulkUpdate\BulkUpdates\DataTypeBulkUpdate;
 
 /**
  * Class BulkUpdateServiceProvider
