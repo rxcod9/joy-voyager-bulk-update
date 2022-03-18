@@ -26,10 +26,9 @@ By 🐼 [Ramakant Gangwar](https://github.com/rxcod9).
 # 1. Require this Package in your fresh Laravel/Voyager project
 composer require joy/voyager-bulk-update
 
-# 2. Publish everything
+# 2. Publish evrything
 php artisan vendor:publish --provider="Joy\VoyagerBulkUpdate\VoyagerBulkUpdateServiceProvider" --force
-
-# 3. OR Publish Voyager overrided actions blade [MANDATORY STEP FOR IMPORT BULK BUTTON TO WORK]
+# 3. OR Publish Voyager overrided actions blade [MANDATORY STEP FOR BULK_UPDATE BULK GROUP BUTTON TO WORK]
 php artisan vendor:publish --provider="Joy\VoyagerBulkUpdate\VoyagerBulkUpdateServiceProvider" --tag=voyager-actions-views --force
 ```
 

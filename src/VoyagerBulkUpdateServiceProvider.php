@@ -6,10 +6,6 @@ namespace Joy\VoyagerBulkUpdate;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Joy\VoyagerBulkUpdate\Console\Commands\AllDataTypesImport;
-use Joy\VoyagerBulkUpdate\Console\Commands\AllDataTypesTemplateExport;
-use Joy\VoyagerBulkUpdate\Console\Commands\DataTypeImport;
-use Joy\VoyagerBulkUpdate\Console\Commands\DataTypeTemplateExport;
 use TCG\Voyager\Facades\Voyager;
 
 /**
@@ -31,7 +27,7 @@ class VoyagerBulkUpdateServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Voyager::addAction(\Joy\VoyagerBulkUpdate\Actions\ImportAction::class);
+        Voyager::addAction(\Joy\VoyagerBulkUpdate\Actions\BulkUpdateAction::class);
 
         $this->registerPublishables();
 
@@ -95,8 +91,7 @@ class VoyagerBulkUpdateServiceProvider extends ServiceProvider
         ], 'config');
 
         $this->publishes([
-            __DIR__ . '/../resources/views'                => resource_path('views/vendor/joy-voyager-bulk-update'),
-            __DIR__ . '/../resources/views/bread/partials' => resource_path('views/vendor/voyager/bread/partials'),
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/joy-voyager-bulk-update'),
         ], 'views');
 
         $this->publishes([
@@ -110,27 +105,8 @@ class VoyagerBulkUpdateServiceProvider extends ServiceProvider
 
     protected function registerCommands(): void
     {
-        $this->app->singleton('command.joy-voyager.import-template', function () {
-            return new DataTypeTemplateExport();
-        });
-
-        $this->app->singleton('command.joy-voyager.import-all-template', function () {
-            return new AllDataTypesTemplateExport();
-        });
-
-        $this->app->singleton('command.joy-voyager.import', function () {
-            return new DataTypeImport();
-        });
-
-        $this->app->singleton('command.joy-voyager.import-all', function () {
-            return new AllDataTypesImport();
-        });
-
         $this->commands([
-            'command.joy-voyager.import-template',
-            'command.joy-voyager.import-all-template',
-            'command.joy-voyager.import',
-            'command.joy-voyager.import-all'
+            //
         ]);
     }
 }

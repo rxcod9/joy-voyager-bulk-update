@@ -31,8 +31,7 @@ Route::group(['prefix' => config('joy-voyager-bulk-update.admin_prefix', 'admin'
 
             try {
                 foreach (Voyager::model('DataType')::all() as $dataType) {
-                    Route::get($dataType->slug . '/import-template', $breadController.'@importTemplate')->name($dataType->slug.'.import-template');
-                    Route::post($dataType->slug . '/import', $breadController.'@import')->name($dataType->slug.'.import');
+                    Route::get($dataType->slug . '/bulk-update', $breadController.'@bulkUpdate')->name($dataType->slug.'.bulk-update');
                 }
             } catch (\InvalidArgumentException $e) {
                 throw new \InvalidArgumentException("Custom routes hasn't been configured because: ".$e->getMessage(), 1);
@@ -40,8 +39,7 @@ Route::group(['prefix' => config('joy-voyager-bulk-update.admin_prefix', 'admin'
                 // do nothing, might just be because table not yet migrated.
             }
 
-            Route::get('import-template-all', $breadController.'@importTemplateAll')->name('import-template-all');
-            Route::post('import', $breadController.'@importAll')->name('import-all');
+            Route::get('bulk-update', $breadController.'@bulkUpdateAll')->name('bulk-update-all');
 
             // event(new RoutingAdminAfter()); @deprecated
         });

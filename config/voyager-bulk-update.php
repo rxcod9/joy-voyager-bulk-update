@@ -8,12 +8,7 @@ return [
     'enabled' => env('VOYAGER_BULK_UPDATE_ENABLED', true),
 
     /*
-     * If validation enabled for voyager-bulk-update package.
-     */
-    'validation' => env('VOYAGER_BULK_UPDATE_VALIDATION_ENABLED', false),
-
-    /*
-    | Here you can specify for which data type slugs import is enabled
+    | Here you can specify for which data type slugs bulk-update is enabled
     | 
     | Supported: "*", or data type slugs "users", "roles"
     |
@@ -22,7 +17,7 @@ return [
     'allowed_slugs' => array_filter(explode(',', env('VOYAGER_BULK_UPDATE_ALLOWED_SLUGS', '*'))),
 
     /*
-    | Here you can specify for which data type slugs import is not allowed
+    | Here you can specify for which data type slugs bulk-update is not allowed
     | 
     | Supported: "*", or data type slugs "users", "roles"
     |
@@ -51,51 +46,5 @@ return [
 
     'controllers' => [
         'namespace' => 'Joy\\VoyagerBulkUpdate\\Http\\Controllers',
-    ],
-
-    /*
-    | The default import disk.
-    */
-    'disk' => env('VOYAGER_BULK_UPDATE_DISK', null),
-
-    /*
-    | The default import readerType.
-    | 
-    | Supported: "Xlsx", "Csv", "Ods", "Xls",
-    |   "Slk", "Xml", "Gnumeric", "Html"
-    */
-    'readerType' => env('VOYAGER_BULK_UPDATE_READER_TYPE', 'Xlsx'),
-
-    /*
-    | The default import writerType.
-    | 
-    | Supported: "Xlsx", "Csv", "Csv", "Ods", "Xls",
-    |   "Slk", "Xml", "Gnumeric", "Html"
-    */
-    'writerType' => env('VOYAGER_BULK_UPDATE_WRITER_TYPE', 'Xlsx'),
-
-    /*
-    | Here you can specify which mimes are allowed to upload
-    | 
-    | Supported: "xlsx","csv","tsv","ods","xls","slk","xml","gnumeric","html"
-    |
-    */
-
-    'allowed_mimes' => env('VOYAGER_BULK_UPDATE_ALLOWED_MIMES', 'xlsx,txt,csv,tsv,ods,xls,slk,xml,gnumeric,html'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Unique column config
-    |--------------------------------------------------------------------------
-    |
-    | Here you can specify unique column settings
-    | Make sure db also has unique index or primary index on that column
-    | Leave null for primary key
-    |
-    */
-
-    'unique_column' => [
-        // 'users' => 'email',
-        // 'YOUR_DATATYPE_SLUG' => 'MODEL_UNIQUE_KEY',
     ],
 ];
