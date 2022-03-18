@@ -4,10 +4,8 @@ namespace Joy\VoyagerBulkUpdate\Actions;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
 use TCG\Voyager\Actions\AbstractAction;
 use TCG\Voyager\Facades\Voyager;
-use Maatwebsite\Excel\Excel;
 
 class BulkUpdateAction extends AbstractAction
 {
