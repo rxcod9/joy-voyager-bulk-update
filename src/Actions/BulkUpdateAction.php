@@ -103,7 +103,7 @@ class BulkUpdateAction extends AbstractAction
 
     public function rows()
     {
-        if($this->rows) {
+        if ($this->rows) {
             return $this->rows;
         }
 
