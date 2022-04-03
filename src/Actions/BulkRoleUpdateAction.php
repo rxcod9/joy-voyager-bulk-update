@@ -16,7 +16,7 @@ class BulkRoleUpdateAction extends BulkUpdateAction
 
     public function getIcon()
     {
-        return 'voyager-edit';
+        return 'fa-solid fa-bolt';
     }
 
     public function getPolicy()

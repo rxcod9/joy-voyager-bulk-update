@@ -16,7 +16,7 @@ class BulkFeaturedUpdateAction extends BulkUpdateAction
 
     public function getIcon()
     {
-        return 'voyager-edit';
+        return 'fa-regular fa-star';
     }
 
     public function getPolicy()

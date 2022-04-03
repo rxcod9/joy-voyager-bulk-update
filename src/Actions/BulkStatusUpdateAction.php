@@ -16,7 +16,7 @@ class BulkStatusUpdateAction extends BulkUpdateAction
 
     public function getIcon()
     {
-        return 'voyager-edit';
+        return 'fa-solid fa-list-check';
     }
 
     public function getPolicy()

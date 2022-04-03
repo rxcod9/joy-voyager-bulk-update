@@ -16,7 +16,7 @@ class BulkParentUpdateAction extends BulkUpdateAction
 
     public function getIcon()
     {
-        return 'voyager-bread';
+        return 'fa-solid fa-user-large';
     }
 
     public function getPolicy()
