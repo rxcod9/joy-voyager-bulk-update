@@ -3,9 +3,9 @@
 namespace Joy\VoyagerBulkUpdate\Http\Controllers;
 
 use Joy\VoyagerBulkUpdate\Http\Traits\BulkUpdateAction;
-use TCG\Voyager\Http\Controllers\VoyagerBaseController as TCGVoyagerBaseController;
+use Joy\VoyagerCore\Http\Controllers\VoyagerBaseController as BaseVoyagerBaseController;
 
-class VoyagerBaseController extends TCGVoyagerBaseController
+class VoyagerBaseController extends BaseVoyagerBaseController
 {
     use BulkUpdateAction;
 }

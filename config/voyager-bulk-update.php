@@ -50,6 +50,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | DataRows Types config
+    |--------------------------------------------------------------------------
+    |
+    | Here you can specify which data rows types you want to bulk update
+    |
+    */
+
+    'data_row_types' => [
+        // 'text',
+        // 'text_area',
+        'select_dropdown',
+        'relationship',
+        'timestamp',
+        // 'image',
+        'checkbox',
+        'number',
+        'time',
+        'date',
+        // 'rich_text_box',
+        // 'code_editor',
+        // 'password',
+        // 'hidden',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | DataRows config
     |--------------------------------------------------------------------------
     |

@@ -61,17 +61,7 @@ class BulkUpdateAction extends AbstractAction
             return false;
         }
 
-        $defaultDataRows  = config('joy-voyager-bulk-update.data_rows.default');
-        $dataTypeDataRows = config('joy-voyager-bulk-update.data_rows.' . $this->dataType->slug, $defaultDataRows);
-        $dataTypeDataRows = $this->rows ?? $dataTypeDataRows;
-
-        $dataTypeRows = $this->dataType->editRows->filter(function ($row) use ($dataTypeDataRows) {
-            return in_array($row->field, $dataTypeDataRows) || (
-                $row->type === 'relationship' && in_array($row->details->column, $dataTypeDataRows)
-            );
-        });
-
-        return $dataTypeRows->count() > 0;
+        return count($this->rows()) > 0;
     }
 
     public function massAction($ids, $comingFrom)
@@ -104,19 +94,15 @@ class BulkUpdateAction extends AbstractAction
     public function rows()
     {
         if ($this->rows) {
-            return $this->rows;
+            $rows         = $this->rows;
+            $dataTypeRows = $this->dataType->editRows->filter(function ($row) use ($rows) {
+                return isDataRowInPatterns($row, $rows);
+            });
+
+            return $dataTypeRows->pluck('field')->toArray();
         }
 
-        $defaultDataRows  = config('joy-voyager-bulk-update.data_rows.default');
-        $dataTypeDataRows = config('joy-voyager-bulk-update.data_rows.' . $this->dataType->slug, $defaultDataRows);
-
-        $dataTypeRows = $this->dataType->editRows->filter(function ($row) use ($dataTypeDataRows) {
-            return in_array($row->field, $dataTypeDataRows) || (
-                $row->type === 'relationship' && in_array($row->details->column, $dataTypeDataRows)
-            );
-        });
-
-        return $dataTypeRows->pluck('field')->toArray();
+        return \bulkUpdateRows($this->dataType);
     }
 
     protected function getSlug(Request $request)

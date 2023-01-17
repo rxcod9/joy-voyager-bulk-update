@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use TCG\Voyager\Events\BreadDataUpdated;
 use TCG\Voyager\Facades\Voyager;
-use TCG\Voyager\Http\Controllers\Traits\BreadRelationshipParser;
+use Joy\VoyagerCore\Http\Controllers\Traits\BreadRelationshipParser;
 
 trait BulkUpdateAction
 {
@@ -30,14 +30,15 @@ trait BulkUpdateAction
 
         $dataType = Voyager::model('DataType')->where('slug', '=', $slug)->first();
 
-        $defaultDataRows  = config('joy-voyager-bulk-update.data_rows.default');
-        $dataTypeDataRows = config('joy-voyager-bulk-update.data_rows.' . $dataType->slug, $defaultDataRows);
+        $dataTypeDataRows = \bulkUpdateRows($dataType);
         $dataTypeDataRows = $request->get('rows', $dataTypeDataRows);
 
         $dataTypeRows = $dataType->editRows->filter(function ($row) use ($dataTypeDataRows) {
-            return in_array($row->field, $dataTypeDataRows) || (
-                $row->type === 'relationship' && in_array($row->details->column, $dataTypeDataRows)
-            );
+            return isDataRowInPatternsReverse($row, $dataTypeDataRows);
+        })->filter(function ($row) use ($request) {
+            return $request->get($row->field) ||
+                    (optional($row->details)->column && $request->get(optional($row->details)->column)) ||
+                    (optional($row->details)->type_column && $request->get(optional($row->details)->type_column));
         });
 
         $ids = explode(',', $request->ids);

@@ -1,26 +1,43 @@
 <?php
-
 use Illuminate\Support\Str;
+use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Models\DataRow;
 use TCG\Voyager\Models\DataType;
 
-// if (! function_exists('joyVoyagerBulkUpdate')) {
+// if (! function_exists('bulkUpdateRows')) {
 //     /**
 //      * Helper
 //      */
-//     function joyVoyagerBulkUpdate($argument1 = null)
+//     function bulkUpdateRows($argument1 = null)
 //     {
 //         //
 //     }
 // }
 
-if (!function_exists('isInPatterns')) {
+if (!function_exists('dataRowByField')) {
+    /**
+     * DataRow by field
+     *
+     * @param DataRow
+     */
+    function dataRowByField($field): DataRow
+    {
+        return Voyager::model('DataRow')->where('field', $field)->first();
+    }
+}
+
+if (!function_exists('isDataRowInPatterns')) {
     /**
      * Helper
      */
-    function isInPatterns($key, $patterns)
+    function isDataRowInPatterns($dataRow, $dataRowPatterns)
     {
-        foreach ($patterns as $pattern) {
-            if (Str::is($pattern, $key)) {
+        foreach ($dataRowPatterns as $pattern) {
+            if (
+                Str::is($pattern, $dataRow->field) ||
+                (optional($dataRow->details)->column && Str::is($pattern, optional($dataRow->details)->column)) ||
+                (optional($dataRow->details)->type_column && Str::is($pattern, optional($dataRow->details)->type_column))
+            ) {
                 return true;
             }
         }
@@ -28,25 +45,53 @@ if (!function_exists('isInPatterns')) {
     }
 }
 
-if (!function_exists('removeRelationshipField')) {
-    function removeRelationshipField(DataType $dataType, $bread_type = 'browse')
+if (!function_exists('isDataRowInPatternsReverse')) {
+    /**
+     * Helper
+     */
+    function isDataRowInPatternsReverse($dataRow, $dataRowPatterns)
     {
-        $forget_keys = [];
-        foreach ($dataType->{$bread_type . 'Rows'} as $key => $row) {
-            if ($row->type == 'relationship') {
-                if ($row->details->type == 'belongsTo') {
-                    $relationshipField = @$row->details->column;
-                    $keyInCollection   = key($dataType->{$bread_type . 'Rows'}->where('field', '=', $relationshipField)->toArray());
-                    array_push($forget_keys, $keyInCollection);
-                }
+        foreach ($dataRowPatterns as $pattern) {
+            $patternDataRow = dataRowByField($pattern);
+            if (
+                $patternDataRow &&
+                Str::is($dataRow->field, $dataRow->field) ||
+                (optional($patternDataRow->details)->column && Str::is($dataRow->field, optional($patternDataRow->details)->column)) ||
+                (optional($patternDataRow->details)->type_column && Str::is($dataRow->field, optional($patternDataRow->details)->type_column))
+            ) {
+                return true;
             }
         }
+        return false;
+    }
+}
 
-        foreach ($forget_keys as $forget_key) {
-            $dataType->{$bread_type . 'Rows'}->forget($forget_key);
+if (!function_exists('bulkUpdateRows')) {
+    /**
+     * Helper
+     */
+    function bulkUpdateRows(DataType $dataType)
+    {
+        $dataTypeDataRows = config('joy-voyager-bulk-update.data_rows.' . $dataType->slug, []);
+
+        if ($dataTypeDataRows) {
+            $dataTypeRows = $dataType->editRows->filter(function ($row) use ($dataTypeDataRows) {
+                return isDataRowInPatterns($row, $dataTypeDataRows);
+            });
+
+            return $dataTypeRows->pluck('field')->toArray();
         }
 
-        // Reindex collection
-        $dataType->{$bread_type . 'Rows'} = $dataType->{$bread_type . 'Rows'}->values();
+        $dataTypeDataRowTypes = config('joy-voyager-bulk-update.data_row_types', []);
+
+        if ($dataTypeDataRowTypes) {
+            $dataTypeRows = $dataType->editRows->filter(function ($row) use ($dataTypeDataRowTypes) {
+                return isInPatterns($row->type, $dataTypeDataRowTypes);
+            });
+
+            return $dataTypeRows->pluck('field')->toArray();
+        }
+
+        return [];
     }
 }

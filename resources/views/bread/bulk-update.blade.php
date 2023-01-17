@@ -4,8 +4,7 @@
     $bulkUpdateDataTypeContent = new $dataType->model_name();
     removeRelationshipField($dataType, 'add');
     removeRelationshipField($dataType, 'edit');
-    $defaultDataRows = config('joy-voyager-bulk-update.data_rows.default');
-    $dataTypeDataRows = config('joy-voyager-bulk-update.data_rows.' . $dataType->slug, $defaultDataRows);
+    $dataTypeDataRows = \bulkUpdateRows($dataType);
     $dataTypeDataRows = method_exists($action, 'rows') ? $action->rows() : $dataTypeDataRows;
     $hash = md5(get_class($action) . json_encode($dataTypeDataRows));
 @endphp
