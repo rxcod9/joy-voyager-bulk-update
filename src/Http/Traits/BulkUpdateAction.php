@@ -36,9 +36,9 @@ trait BulkUpdateAction
         $dataTypeRows = $dataType->editRows->filter(function ($row) use ($dataTypeDataRows) {
             return isDataRowInPatternsReverse($row, $dataTypeDataRows);
         })->filter(function ($row) use ($request) {
-            return $request->get($row->field) ||
-                    (optional($row->details)->column && $request->get(optional($row->details)->column)) ||
-                    (optional($row->details)->type_column && $request->get(optional($row->details)->type_column));
+            return $request->has($row->field) ||
+                    (optional($row->details)->column && $request->has(optional($row->details)->column)) ||
+                    (optional($row->details)->type_column && $request->has(optional($row->details)->type_column));
         });
 
         $ids = explode(',', $request->ids);
